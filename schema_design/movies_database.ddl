@@ -52,3 +52,13 @@ CREATE TABLE IF NOT EXISTS content.person_film_work
     foreign key (person_id) references content.person (id),
     foreign key (film_work_id) references content.film_work (id)
 );
+
+CREATE INDEX film_work_creation_date_idx ON content.film_work(creation_date);
+
+CREATE UNIQUE INDEX film_work_person_idx ON content.person_film_work (film_work_id, person_id);
+
+CREATE UNIQUE INDEX film_work_genre_idx ON content.genre_film_work (film_work_id, genre_id);
+
+CREATE UNIQUE INDEX genre_name_idx ON content.genre(name);
+
+CREATE INDEX person_name_idx ON content.person(full_name);
