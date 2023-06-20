@@ -1,7 +1,6 @@
 import os
-from pathlib import Path
 from dotenv import load_dotenv
-from split_settings.tools import include
+from split_settings.tools import include as split_include
 
 load_dotenv()
 
@@ -20,7 +19,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'movies.apps.MoviesConfig'
+    'movies.apps.MoviesConfig',
+    'debug_toolbar'
 ]
 
 MIDDLEWARE = [
@@ -31,6 +31,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -49,6 +50,12 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
@@ -76,6 +83,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOCALE_PATHS = ['movies/locale']
-include(
+
+split_include(
     'components/database.py'
 )
