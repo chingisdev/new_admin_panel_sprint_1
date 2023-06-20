@@ -56,19 +56,18 @@ class Person(UUIDMixin, TimeStampedMixin):
 
 class Filmwork(TimeStampedMixin, UUIDMixin):
     class FilmType(models.TextChoices):
-        MOVIE = 'фильм'
-        TV_SHOW = 'тв-шоу'
+        MOVIE = 'movie', _('movie')
+        TV_SHOW = 'tv-show', _('tv-show')
 
-    film_type_choices = [
-        ('movie', FilmType.MOVIE),
-        ('tv_show', FilmType.TV_SHOW)
-    ]
-
+    certificate = models.CharField(_('certificate'), max_length=512, blank=True)
+    # Параметр upload_to указывает, в какой подпапке будут храниться загружемые файлы.
+    # Базовая папка указана в файле настроек как MEDIA_ROOT
+    file_path = models.FileField(_('file'), blank=True, null=True, upload_to='movies/')
     title = models.TextField(_('title'), blank=False)
     description = models.TextField(_('description'), blank=True)
     creation_date = models.DateTimeField()
     rating = models.FloatField(_('rating'), blank=True, validators=[MinValueValidator(0), MaxValueValidator(100)])
-    type = models.TextField(_('type'), choices=film_type_choices, default=FilmType.MOVIE)
+    type = models.TextField(_('type'), choices=FilmType.choices, default=FilmType.MOVIE)
     genres = models.ManyToManyField(Genre, through='GenreFilmwork')
     persons = models.ManyToManyField(Person, through='PersonFilmwork')
 
