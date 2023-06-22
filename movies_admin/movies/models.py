@@ -8,8 +8,8 @@ import uuid
 
 
 class TimeStampedMixin(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         # Этот параметр указывает Django, что этот класс не является представлением таблицы
@@ -59,15 +59,14 @@ class Filmwork(TimeStampedMixin, UUIDMixin):
         MOVIE = 'movie', _('movie')
         TV_SHOW = 'tv-show', _('tv-show')
 
-    certificate = models.CharField(_('certificate'), max_length=512, blank=True)
-    # Параметр upload_to указывает, в какой подпапке будут храниться загружемые файлы.
-    # Базовая папка указана в файле настроек как MEDIA_ROOT
-    file_path = models.FileField(_('file'), blank=True, null=True, upload_to='movies/')
     title = models.TextField(_('title'), blank=False)
     description = models.TextField(_('description'), blank=True)
     creation_date = models.DateTimeField()
+    file_path = models.FileField(_('file'), blank=True, null=True, upload_to='movies/')
     rating = models.FloatField(_('rating'), blank=True, validators=[MinValueValidator(0), MaxValueValidator(100)])
     type = models.TextField(_('type'), choices=FilmType.choices, default=FilmType.MOVIE)
+    # Параметр upload_to указывает, в какой подпапке будут храниться загружемые файлы.
+    # Базовая папка указана в файле настроек как MEDIA_ROOT
     genres = models.ManyToManyField(Genre, through='GenreFilmwork')
     persons = models.ManyToManyField(Person, through='PersonFilmwork')
 
@@ -83,19 +82,19 @@ class Filmwork(TimeStampedMixin, UUIDMixin):
 
 
 class PersonFilmwork(UUIDMixin):
-    film_work = models.ForeignKey('Filmwork', on_delete=models.CASCADE)
-    person = models.ForeignKey('Person', on_delete=models.CASCADE)
+    film_work_id = models.ForeignKey('Filmwork', on_delete=models.CASCADE)
+    person_id = models.ForeignKey('Person', on_delete=models.CASCADE)
     role = models.TextField(_('role'), null=True)
-    created = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = "content\".\"person_film_work"
 
 
 class GenreFilmwork(UUIDMixin):
-    film_work = models.ForeignKey('Filmwork', on_delete=models.CASCADE)
-    genre = models.ForeignKey('Genre', on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
+    film_work_id = models.ForeignKey('Filmwork', on_delete=models.CASCADE)
+    genre_id = models.ForeignKey('Genre', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = "content\".\"genre_film_work"
