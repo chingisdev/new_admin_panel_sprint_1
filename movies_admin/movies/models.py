@@ -9,7 +9,7 @@ import uuid
 
 class TimeStampedMixin(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         # Этот параметр указывает Django, что этот класс не является представлением таблицы
