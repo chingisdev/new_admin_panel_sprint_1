@@ -12,23 +12,26 @@ from sqlite_to_postgres import PostgresSaver, SQLiteExtractor
 
 def load_from_sqlite(sqlite_connection: sqlite3.Connection, postgres_connection: _connection):
     """Основной метод загрузки данных из SQLite в Postgres"""
-    postgres_saver = PostgresSaver(postgres_connection)
-    sqlite_extractor = SQLiteExtractor(sqlite_connection)
+    try:
+        postgres_saver = PostgresSaver(postgres_connection)
+        sqlite_extractor = SQLiteExtractor(sqlite_connection)
 
-    movies_data = sqlite_extractor.extract_movies()
-    postgres_saver.save_all_data(movies_data)
+        movies_data = sqlite_extractor.extract_movies()
+        postgres_saver.save_all_data(movies_data)
 
-    genres_data = sqlite_extractor.extract_genres()
-    postgres_saver.save_all_data(genres_data)
+        genres_data = sqlite_extractor.extract_genres()
+        postgres_saver.save_all_data(genres_data)
 
-    persons_data = sqlite_extractor.extract_persons()
-    postgres_saver.save_all_data(persons_data)
+        persons_data = sqlite_extractor.extract_persons()
+        postgres_saver.save_all_data(persons_data)
 
-    genre_filmwork = sqlite_extractor.extract_genre_movies()
-    postgres_saver.save_all_data(genre_filmwork)
+        genre_filmwork = sqlite_extractor.extract_genre_movies()
+        postgres_saver.save_all_data(genre_filmwork)
 
-    persons_filmwork = sqlite_extractor.extract_person_movies()
-    postgres_saver.save_all_data(persons_filmwork)
+        persons_filmwork = sqlite_extractor.extract_person_movies()
+        postgres_saver.save_all_data(persons_filmwork)
+    except IOError as e:
+        print("An IOError occurred: %s" % e)
 
 
 @contextmanager
