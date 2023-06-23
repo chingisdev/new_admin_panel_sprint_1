@@ -4,9 +4,10 @@ import psycopg2
 from psycopg2.extensions import connection as _connection
 from psycopg2.extras import DictCursor
 from contextlib import contextmanager
-from sqlite_to_postgres.postgres_saver import PostgresSaver
-from sqlite_to_postgres.sqlite_extractor import SQLiteExtractor
+
 from pathlib import Path
+
+from sqlite_to_postgres import PostgresSaver, SQLiteExtractor
 
 
 def load_from_sqlite(sqlite_connection: sqlite3.Connection, postgres_connection: _connection):
@@ -47,7 +48,7 @@ def create_postgresql_connection(credentials: dict, cursor_class):
 
 if __name__ == '__main__':
     dsl = {'dbname': 'movies_database', 'user': 'app', 'password': '123qwe', 'host': '127.0.0.1', 'port': 5432}
-    BASE_DIR = Path(__file__).absolute()
+    BASE_DIR = Path(__file__).parent.absolute()
     SQLITE_DB_PATH = BASE_DIR / "db.sqlite"
     with create_sqlite_connection(SQLITE_DB_PATH) as sqlite_conn, create_postgresql_connection(dsl,
                                                                                                DictCursor) as pg_conn:
