@@ -23,7 +23,7 @@ class PersonAdmin(admin.ModelAdmin):
 
 @admin.register(Filmwork)
 class FilmWorkAdmin(admin.ModelAdmin):
-    inlines = (GenreFilmworkInline,)
+    inlines = (GenreFilmworkInline, PersonFilmworkInline)
 
     # Отображение полей в списке
     list_display = ('title', 'type', 'creation_date', 'rating',)
