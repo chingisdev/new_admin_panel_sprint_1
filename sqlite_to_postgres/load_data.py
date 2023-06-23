@@ -1,11 +1,10 @@
 import sqlite3
-import psycopg2
+from contextlib import contextmanager
+from pathlib import Path
 
+import psycopg2
 from psycopg2.extensions import connection as _connection
 from psycopg2.extras import DictCursor
-from contextlib import contextmanager
-
-from pathlib import Path
 
 from sqlite_to_postgres import PostgresSaver, SQLiteExtractor
 

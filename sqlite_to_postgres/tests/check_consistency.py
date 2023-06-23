@@ -1,8 +1,12 @@
-import pytest
-from sqlite_to_postgres.load_data import create_sqlite_connection, create_postgresql_connection
-from sqlite_to_postgres.models import Genre, GenreFilmwork, PersonFilmwork, Person, FilmWork
-from psycopg2.extras import DictCursor
 from pathlib import Path
+
+import pytest
+from psycopg2.extras import DictCursor
+
+from sqlite_to_postgres.load_data import (create_postgresql_connection,
+                                          create_sqlite_connection)
+from sqlite_to_postgres.models import (FilmWork, Genre, GenreFilmwork, Person,
+                                       PersonFilmwork)
 
 BASE_DIR = Path(__file__).parent.parent.absolute()
 SQLITE_DB_PATH = BASE_DIR / "db.sqlite"

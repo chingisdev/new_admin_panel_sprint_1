@@ -1,6 +1,7 @@
 import sqlite3
 
-from sqlite_to_postgres.models import FilmWork, GenreFilmwork, Genre, PersonFilmwork, Person
+from sqlite_to_postgres.models import (FilmWork, Genre, GenreFilmwork, Person,
+                                       PersonFilmwork)
 
 
 class SQLiteExtractor:

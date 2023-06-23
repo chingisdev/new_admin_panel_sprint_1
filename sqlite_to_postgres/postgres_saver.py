@@ -1,4 +1,4 @@
-from dataclasses import fields, astuple
+from dataclasses import astuple, fields
 
 from psycopg2.extensions import connection as _connection
 
