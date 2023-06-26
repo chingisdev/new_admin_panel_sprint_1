@@ -1,12 +1,12 @@
 import sqlite3
-from contextlib import contextmanager
 from pathlib import Path
 
-import psycopg2
 from psycopg2.extensions import connection as _connection
 from psycopg2.extras import DictCursor
 
-from sqlite_to_postgres import PostgresSaver, SQLiteExtractor
+from postgres_saver import PostgresSaver
+from sqlite_extractor import SQLiteExtractor
+from database_contexts import create_sqlite_connection, create_postgresql_connection
 
 
 def load_from_sqlite(sqlite_connection: sqlite3.Connection, postgres_connection: _connection):
@@ -31,21 +31,6 @@ def load_from_sqlite(sqlite_connection: sqlite3.Connection, postgres_connection:
         postgres_saver.save_all_data(persons_filmwork)
     except IOError as e:
         print("An IOError occurred: %s" % e)
-
-
-@contextmanager
-def create_sqlite_connection(database_path: Path):
-    sqlite_connection = sqlite3.connect(database_path, detect_types=sqlite3.PARSE_COLNAMES)
-    sqlite_connection.row_factory = sqlite3.Row
-    yield sqlite_connection
-    sqlite_connection.close()
-
-
-@contextmanager
-def create_postgresql_connection(credentials: dict, cursor_class):
-    pg_connection = psycopg2.connect(**credentials, cursor_factory=cursor_class)
-    yield pg_connection
-    pg_connection.close()
 
 
 if __name__ == '__main__':
