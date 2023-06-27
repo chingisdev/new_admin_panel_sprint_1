@@ -8,21 +8,20 @@ class PostgresSaver:
         self.connection = pg_conn
         self.cursor = self.connection.cursor()
 
-    def save_all_data(self, data):
-        table_name = list(data.keys())[0]
-        data_to_save = data[table_name]
-        if data_to_save:
-            self._clear_database(table_name)
-            field_names = self._get_column_names(data_to_save[0])
-            columns = ', '.join(field_names)
-            bind_values = self._prepare_data_to_insert(len(field_names),
-                                                       data_to_save)
-            self.cursor.execute(f"""
-                INSERT INTO content.{table_name} ({columns})
-                VALUES {bind_values}
-                ON CONFLICT (id) DO NOTHING
-                """)
-            self.connection.commit()
+    def save_all_data(self, data: dict[str, list]):
+        for table_name, instances in data.items():
+            if instances:
+                self._clear_database(table_name)
+                field_names = self._get_column_names(instances[0])
+                columns = ', '.join(field_names)
+                bind_values = self._prepare_data_to_insert(len(field_names),
+                                                           instances)
+                self.cursor.execute(f"""
+                    INSERT INTO content.{table_name} ({columns})
+                    VALUES {bind_values}
+                    ON CONFLICT (id) DO NOTHING
+                    """)
+                self.connection.commit()
 
     def _clear_database(self, table_name):
         self.cursor.execute(f'TRUNCATE content.{table_name} CASCADE;')

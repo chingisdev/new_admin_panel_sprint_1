@@ -4,6 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+
 # Create your models here.
 
 
@@ -62,9 +63,13 @@ class Filmwork(TimeStampedMixin, UUIDMixin):
     title = models.TextField(_('title'), blank=False)
     description = models.TextField(_('description'), blank=True)
     creation_date = models.DateTimeField()
-    file_path = models.FileField(_('file'), blank=True, null=True, upload_to='movies/')
-    rating = models.FloatField(_('rating'), blank=True, validators=[MinValueValidator(0), MaxValueValidator(100)])
-    type = models.TextField(_('type'), choices=FilmType.choices, default=FilmType.MOVIE)
+    file_path = models.FileField(_('file'), blank=True, null=True,
+                                 upload_to='movies/')
+    rating = models.FloatField(_('rating'), blank=True,
+                               validators=[MinValueValidator(0),
+                                           MaxValueValidator(100)])
+    type = models.TextField(_('type'), choices=FilmType.choices,
+                            default=FilmType.MOVIE)
     # Параметр upload_to указывает, в какой подпапке будут храниться загружемые файлы.
     # Базовая папка указана в файле настроек как MEDIA_ROOT
     genres = models.ManyToManyField(Genre, through='GenreFilmwork')
@@ -90,6 +95,13 @@ class PersonFilmwork(UUIDMixin):
     class Meta:
         db_table = "content\".\"person_film_work"
 
+        constraints = [
+            models.UniqueConstraint(
+                fields=['film_work', 'person', 'role'],
+                name='unique_film_work_person_role',
+            ),
+        ]
+
 
 class GenreFilmwork(UUIDMixin):
     film_work = models.ForeignKey('Filmwork', on_delete=models.CASCADE)
@@ -98,3 +110,10 @@ class GenreFilmwork(UUIDMixin):
 
     class Meta:
         db_table = "content\".\"genre_film_work"
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['film_work', 'genre'],
+                name='unique_film_work_genre',
+            ),
+        ]

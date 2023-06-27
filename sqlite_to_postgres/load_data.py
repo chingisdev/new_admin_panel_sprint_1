@@ -1,11 +1,15 @@
+import logging
+import os
 import sqlite3
 from pathlib import Path
+
+from dotenv import load_dotenv
+from psycopg2.extensions import connection as _connection
+from psycopg2.extras import DictCursor
 
 from database_contexts import (create_postgresql_connection,
                                create_sqlite_connection)
 from postgres_saver import PostgresSaver
-from psycopg2.extensions import connection as _connection
-from psycopg2.extras import DictCursor
 from sqlite_extractor import SQLiteExtractor
 
 
@@ -15,31 +19,21 @@ def load_from_sqlite(sqlite_connection: sqlite3.Connection,
         postgres_saver = PostgresSaver(postgres_connection)
         sqlite_extractor = SQLiteExtractor(sqlite_connection)
 
-        movies_data = sqlite_extractor.extract_movies()
-        postgres_saver.save_all_data(movies_data)
+        movies_tables = sqlite_extractor.extract_movies()
+        postgres_saver.save_all_data(movies_tables)
 
-        genres_data = sqlite_extractor.extract_genres()
-        postgres_saver.save_all_data(genres_data)
-
-        persons_data = sqlite_extractor.extract_persons()
-        postgres_saver.save_all_data(persons_data)
-
-        genre_filmwork = sqlite_extractor.extract_genre_movies()
-        postgres_saver.save_all_data(genre_filmwork)
-
-        persons_filmwork = sqlite_extractor.extract_person_movies()
-        postgres_saver.save_all_data(persons_filmwork)
     except IOError as e:
-        print('An IOError occurred: %s' % e)
+        logging.error(f'An IOError occurred {e}')
 
 
 if __name__ == '__main__':
+    load_dotenv()
     dsl = {
-        'dbname': 'movies_database',
-        'user': 'app',
-        'password': '123qwe',
-        'host': '127.0.0.1',
-        'port': 5432,
+        'dbname': os.environ.get('DB_NAME'),
+        'user': os.environ.get('DB_USERNAME'),
+        'password': os.environ.get('DB_PASSWORD'),
+        'host': os.environ.get('DB_HOST'),
+        'port': int(os.environ.get('DB_PORT')),
     }
     BASE_DIR = Path(__file__).parent.absolute()
     SQLITE_DB_PATH = BASE_DIR / 'db.sqlite'

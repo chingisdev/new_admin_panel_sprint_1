@@ -7,34 +7,25 @@ class SQLiteExtractor:
     def __init__(self, sqlite_connection: sqlite3.Connection):
         self.connection = sqlite_connection
         self.fetch_size = 100
+        self.table_map = {
+            'film_work': FilmWork,
+            'genre': Genre,
+            'person': Person,
+            'person_film_work': PersonFilmwork,
+            'genre_film_work': GenreFilmwork
+        }
+        self.cursor = self.connection.cursor()
 
     def extract_movies(self):
-        table_name = 'film_work'
-        return self._execute_select_query(table_name, model_class=FilmWork)
-
-    def extract_genres(self):
-        table_name = 'genre'
-        return self._execute_select_query(table_name, model_class=Genre)
-
-    def extract_persons(self):
-        table_name = 'person'
-        return self._execute_select_query(table_name, model_class=Person)
-
-    def extract_person_movies(self):
-        table_name = 'person_film_work'
-        return self._execute_select_query(table_name,
-                                          model_class=PersonFilmwork)
-
-    def extract_genre_movies(self):
-        table_name = 'genre_film_work'
-        return self._execute_select_query(table_name,
-                                          model_class=GenreFilmwork)
+        movies = {}
+        for table_name, model in self.table_map.items():
+            movies[table_name] = self._execute_select_query(table_name, model)
+        return movies
 
     def _execute_select_query(self, table_name, model_class):
-        cursor = self.connection.cursor()
-        cursor.execute(f'SELECT * FROM {table_name};')
-        movie_batches: list[model_class] = []
-        while data := cursor.fetchmany(self.fetch_size):
+        self.cursor.execute(f'SELECT * FROM {table_name};')
+        batches: list[model_class] = []
+        while data := self.cursor.fetchmany(self.fetch_size):
             converted_data = [model_class(**dict(movie)) for movie in data]
-            movie_batches.extend(converted_data)
-        return {table_name: movie_batches}
+            batches.extend(converted_data)
+        return batches
