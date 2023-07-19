@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS content.film_work
     rating        FLOAT,
     type          TEXT NOT NULL,
     created_at    timestamp with time zone,
-    modified_at   timestamp with time zone
+    updated_at    timestamp with time zone
 );
 
 CREATE TABLE IF NOT EXISTS content.genre
@@ -21,16 +21,16 @@ CREATE TABLE IF NOT EXISTS content.genre
     name        TEXT NOT NULL,
     description TEXT,
     created_at  timestamp with time zone,
-    modified_at timestamp with time zone
+    updated_at  timestamp with time zone
 );
 
 
 CREATE TABLE IF NOT EXISTS content.person
 (
-    id          uuid PRIMARY KEY,
-    full_name   TEXT NOT NULL,
-    created_at  timestamp with time zone,
-    modified_at timestamp with time zone
+    id         uuid PRIMARY KEY,
+    full_name  TEXT NOT NULL,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
 );
 
 CREATE TABLE IF NOT EXISTS content.genre_film_work
